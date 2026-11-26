@@ -1,0 +1,1039 @@
+<!DOCTYPE html><html lang="es"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análisis Modelo 200 (AEAT) — Dashboard, Excel e Informe</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'light-primary': '#0B3D91',
+            'light-on-primary': '#FFFFFF',
+            'light-primary-container': '#D8E2FF',
+            'light-on-primary-container': '#001A41',
+            'light-secondary': '#575E71',
+            'light-secondary-container': '#DBE2F9',
+            'light-on-secondary-container': '#141B2C',
+            'light-background': '#F8F9FA',
+            'light-on-background': '#191C20',
+            'light-surface-container-lowest': '#FFFFFF',
+            'light-surface-container-low': '#F2F4F7',
+            'light-surface-container': '#ECEEF1',
+            'light-on-surface': '#191C20',
+            'light-on-surface-variant': '#44474E',
+            'light-outline-variant': '#E0E2EC',
+            'light-error': '#BA1A1A',
+            'light-error-container': '#FFDAD6',
+            'light-on-error-container': '#410002',
+            'light-inverse-surface': '#2E3136',
+            'light-inverse-on-surface': '#F0F0F4',
+            'success': '#146C2E',
+            'success-container': '#C4EED0',
+            'on-success-container': '#072711'
+          },
+          fontFamily: {
+            'display': ['"Red Hat Display"', 'sans-serif'],
+            'title': ['"Red Hat Display"', 'sans-serif'],
+            'body': ['"Instrument Sans"', 'sans-serif'],
+            'label': ['"Instrument Sans"', 'sans-serif'],
+            'mono': ['"Spline Sans Mono"', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=Red+Hat+Display:wght@500;600;700&amp;family=Spline+Sans+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body class="bg-light-background text-light-on-background font-body antialiased">
+  <div class="min-h-[1024px] flex flex-col" data-stitch-vh="min-h-[1024px]===min-h-screen">
+    <!-- Top Header -->
+    <header class="bg-blue-50 border-b border-blue-200 px-6 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-30">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded bg-light-primary text-light-on-primary flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined">analytics</span>
+        </div>
+        <div>
+          <h1 id="company-title" class="font-display text-xl font-bold text-light-on-surface leading-tight uppercase">ANÁLISIS FINANCIERO MODELO 200 (AEAT)</h1>
+          <p id="company-subtitle" class="text-xs text-light-on-surface-variant font-mono">Sube 3 ejercicios (PDF) para generar Dashboard, Excel e Informe personalizado</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="mailto:cuadrarcuentas@gmail.com" class="px-3.5 py-2 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-800 hover:bg-indigo-100 text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-colors">
+          <span class="material-symbols-outlined text-base">mail</span>
+          Contactar con el creador
+        </a>
+        <a href="https://wa.me/34694222702" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-sm transition-colors">
+          <span class="material-symbols-outlined text-base">chat</span>
+          WhatsApp · 694 222 702
+        </a>
+        <button id="btn-clear-data" type="button" class="px-3.5 py-2 rounded-lg border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 text-xs sm:text-sm font-bold uppercase flex items-center gap-1.5 transition-colors">
+          <span class="material-symbols-outlined text-base">restart_alt</span>
+          LIMPIAR
+        </button>
+        <button id="btn-export-xlsx" type="button" class="px-4 py-2 rounded-lg bg-light-primary text-light-on-primary hover:opacity-95 text-xs sm:text-sm font-medium flex items-center gap-1.5 shadow-sm transition-opacity">
+          <span class="material-symbols-outlined text-base">download</span>
+          Descargar Excel (.xlsx)
+        </button>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-light-surface-container-lowest border-b border-light-outline-variant px-6 py-4" aria-label="Vistas principales">
+      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-4">
+        <button type="button" data-view="dashboard" data-active-cls="bg-emerald-600 text-white border-emerald-600 shadow-md scale-[1.02]" data-inactive-cls="bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100" class="view-tab px-7 py-4 rounded-xl border-2 text-base md:text-lg font-bold flex items-center gap-2.5 transition-all bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100">
+          <span class="material-symbols-outlined text-2xl">monitoring</span>
+          1. Dashboard
+        </button>
+        <button type="button" data-view="upload" data-active-cls="bg-blue-600 text-white border-blue-600 shadow-md scale-[1.02]" data-inactive-cls="bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100" class="view-tab px-7 py-4 rounded-xl border-2 text-base md:text-lg font-bold flex items-center gap-2.5 transition-all bg-blue-600 text-white border-blue-600 shadow-md scale-[1.02]">
+          <span class="material-symbols-outlined text-2xl">upload_file</span>
+          2. Cargar PDFs
+        </button>
+        <button type="button" data-view="report" data-active-cls="bg-indigo-600 text-white border-indigo-600 shadow-md scale-[1.02]" data-inactive-cls="bg-indigo-50 text-indigo-800 border-indigo-200 hover:bg-indigo-100" class="view-tab px-7 py-4 rounded-xl border-2 text-base md:text-lg font-bold flex items-center gap-2.5 transition-all bg-indigo-50 text-indigo-800 border-indigo-200 hover:bg-indigo-100">
+          <span class="material-symbols-outlined text-2xl">description</span>
+          3. Informe Personalizado
+        </button>
+      </div>
+    </nav>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-6 py-6 flex flex-col gap-6">
+      <!-- VIEW 1: UPLOAD & EXTRACTION -->
+      <section id="view-upload" class="view-panel flex flex-col gap-6">
+        <div id="drop-zone" class="bg-light-surface-container-lowest border-2 border-dashed border-light-primary rounded-2xl p-8 text-center flex flex-col items-center gap-3 transition-colors shadow-sm">
+          <div class="w-14 h-14 rounded-2xl bg-light-primary-container text-light-on-primary-container flex items-center justify-center">
+            <span class="material-symbols-outlined text-3xl">picture_as_pdf</span>
+          </div>
+          <h2 class="font-title text-xl font-bold text-light-on-surface">Arrastra o selecciona tus 3 PDFs del Modelo 200 (AEAT)</h2>
+          <p class="text-sm text-light-on-surface-variant max-w-xl">
+            Al cargar los PDFs se abrirá automáticamente el <strong>Dashboard</strong> con gráficos interactivos, el <strong>Excel (.xlsx)</strong> y el <strong>Informe Personalizado</strong>.
+          </p>
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-semibold">
+            <span class="material-symbols-outlined text-base text-emerald-700">lock</span>
+            Privacidad 100%: esta web NO guarda ni envía ningún dato o PDF subido; todo se procesa localmente en tu navegador.
+          </div>
+          <div class="mt-2 flex flex-wrap items-center justify-center gap-3">
+            <label for="pdf-input" class="cursor-pointer px-6 py-3 rounded-xl bg-light-primary text-light-on-primary text-sm font-bold inline-flex items-center gap-2 hover:opacity-95 shadow-sm">
+              <span class="material-symbols-outlined text-lg">folder_open</span>
+              Seleccionar PDFs del Modelo 200
+              <input id="pdf-input" type="file" accept=".pdf" multiple class="sr-only">
+            </label>
+            <button id="btn-random-demo" type="button" class="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 text-white text-sm font-bold inline-flex items-center gap-2 hover:opacity-95 shadow-md transition-opacity">
+              <span class="material-symbols-outlined text-lg">auto_awesome</span>
+              Ver Ejemplo (Datos Aleatorios)
+            </button>
+          </div>
+        </div>
+
+        <div id="uploaded-cards" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+
+        <!-- Extracted Casillas Preview: Vertical Stack (Balance first, then PyG) -->
+        <div class="flex flex-col gap-6">
+          <!-- Balance -->
+          <div class="bg-light-surface-container-lowest border border-light-outline-variant rounded-lg overflow-hidden">
+            <div class="px-5 py-3.5 border-b border-light-outline-variant bg-emerald-50/70 flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-success text-xl">account_balance</span>
+                <h3 class="font-title text-base font-bold text-light-on-surface uppercase">Balance de Situación</h3>
+              </div>
+              <span id="bal-years-badge" class="font-mono text-xs px-2.5 py-1 rounded bg-light-secondary-container text-light-on-secondary-container">Sin datos</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left">
+                <thead class="bg-light-surface-container-low text-light-on-surface-variant text-xs uppercase">
+                  <tr id="bal-head-row"></tr>
+                </thead>
+                <tbody id="bal-body" class="divide-y divide-light-outline-variant tabular-nums"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- PyG -->
+          <div class="bg-light-surface-container-lowest border border-light-outline-variant rounded-lg overflow-hidden">
+            <div class="px-5 py-3.5 border-b border-light-outline-variant bg-blue-50/70 flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-light-primary text-xl">trending_up</span>
+                <h3 class="font-title text-base font-bold text-light-on-surface uppercase">Cuenta de Pérdidas y Ganancias (PyG)</h3>
+              </div>
+              <span id="pyg-years-badge" class="font-mono text-xs px-2.5 py-1 rounded bg-light-secondary-container text-light-on-secondary-container">Sin datos</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left">
+                <thead class="bg-light-surface-container-low text-light-on-surface-variant text-xs uppercase">
+                  <tr id="pyg-head-row"></tr>
+                </thead>
+                <tbody id="pyg-body" class="divide-y divide-light-outline-variant tabular-nums"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: DASHBOARD & TABLES -->
+      <section id="view-dashboard" class="view-panel hidden flex flex-col gap-6">
+        <!-- Glassy Bento Dashboard Container (inspired by Glassy Dashboard V30) -->
+        <div class="rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-5 md:p-6 text-white shadow-xl border border-slate-700/60 flex flex-col gap-5">
+          <!-- Bento Hero + Radial Gauges -->
+          <div id="dash-hero" class="grid grid-cols-1 lg:grid-cols-12 gap-4"></div>
+
+          <!-- KPI Row -->
+          <div id="kpi-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+
+          <!-- Visual Comparison Charts (Area/Spline + Vertical Columns) -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <h3 class="font-title text-base font-semibold text-white">Evolución Cifra de Negocio vs. Resultado Neto</h3>
+                <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300">Tendencia</span>
+              </div>
+              <div id="chart-revenue" class="w-full"></div>
+            </div>
+            <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <h3 class="font-title text-base font-semibold text-white">Estructura Patrimonial (Activo · FF.PP. · Deuda)</h3>
+                <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300">Balance</span>
+              </div>
+              <div id="chart-structure" class="w-full"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Punto de Equilibrio / Umbral de Rentabilidad -->
+        <div class="bg-light-surface-container-lowest border border-light-outline-variant rounded-lg overflow-hidden">
+          <div class="px-5 py-3.5 border-b border-light-outline-variant bg-red-50/70 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-light-error text-xl">show_chart</span>
+              <h3 class="font-title text-base font-bold text-light-on-surface uppercase">Umbrales de Rentabilidad (Punto de Equilibrio)</h3>
+            </div>
+            <div id="breakeven-years" class="flex flex-wrap gap-2"></div>
+          </div>
+          <div class="p-5 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div id="breakeven-chart" class="lg:col-span-8 w-full"></div>
+            <div id="breakeven-summary" class="lg:col-span-4"></div>
+          </div>
+        </div>
+
+        <!-- Sub-tabs for Financial Tables -->
+        <div class="bg-light-surface-container-lowest border border-light-outline-variant rounded-lg overflow-hidden">
+          <div class="border-b border-light-outline-variant px-4 flex gap-4 overflow-x-auto bg-light-surface-container-low">
+            <button type="button" data-table="balance" class="tbl-tab py-3 text-xs font-semibold uppercase tracking-wide border-b-2 border-light-primary text-light-primary whitespace-nowrap">1. Balance Comparado</button>
+            <button type="button" data-table="pyg" class="tbl-tab py-3 text-xs font-semibold uppercase tracking-wide border-b-2 border-transparent text-light-on-surface-variant whitespace-nowrap">2. Explotación y PyG</button>
+            <button type="button" data-table="ratios" class="tbl-tab py-3 text-xs font-semibold uppercase tracking-wide border-b-2 border-transparent text-light-on-surface-variant whitespace-nowrap">3. Ratios y Tesorería</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead id="dash-table-head" class="bg-light-surface-container-low text-light-on-surface-variant text-xs uppercase"></thead>
+              <tbody id="dash-table-body" class="divide-y divide-light-outline-variant tabular-nums"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: PERSONALIZED REPORT -->
+      <section id="view-report" class="view-panel hidden flex flex-col gap-6">
+        <div id="report-container" class="bg-light-surface-container-lowest border border-light-outline-variant rounded-lg p-6 md:p-8 flex flex-col gap-6"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div id="app-toast" class="hidden fixed bottom-6 right-6 z-50 bg-light-inverse-surface text-light-inverse-on-surface px-4 py-3 rounded shadow-lg flex items-center gap-2 text-sm">
+    <span class="material-symbols-outlined text-base">check_circle</span>
+    <span id="app-toast-msg">Listo</span>
+  </div>
+
+  <script>
+    (function () {
+      if (typeof pdfjsLib !== 'undefined') {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
+
+      const EMPTY_STATE = {
+        company: 'Sin empresa cargada',
+        nif: 'Sube tus PDFs del Modelo 200',
+        years: {}
+      };
+
+      let state = JSON.parse(JSON.stringify(EMPTY_STATE));
+      let activeTable = 'balance';
+
+      const fmtEur = (n) => (Number(n) || 0).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+      const fmtPct = (n) => (Number(n) || 0).toLocaleString('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%';
+
+      function showToast(msg) {
+        const t = document.getElementById('app-toast');
+        const m = document.getElementById('app-toast-msg');
+        if (!t || !m) return;
+        m.textContent = msg;
+        t.classList.remove('hidden');
+        setTimeout(() => t.classList.add('hidden'), 4500);
+      }
+
+      function parseSpanishNumber(raw) {
+        if (!raw) return 0;
+        const cleaned = raw.replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '');
+        const num = parseFloat(cleaned);
+        return isNaN(num) ? 0 : num;
+      }
+
+      // Coordinate-aware AEAT Modelo 200 PDF parser
+      async function parseModelo200PDF(file) {
+        const buf = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+        const targetCodes = ['00101', '00136', '00138', '00149', '00177', '00180', '00185', '00186', '00210', '00228', '00255', '00258', '00260', '00270', '00284', '00296', '00305', '00500'];
+        const casillas = {};
+        let detectedNif = null;
+        let detectedCompany = null;
+        let detectedYear = null;
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          const items = content.items
+            .map((it) => ({
+              str: (it.str || '').trim(),
+              x: it.transform ? it.transform[4] : 0,
+              y: it.transform ? it.transform[5] : 0
+            }))
+            .filter((it) => it.str.length > 0);
+
+          const pageText = items.map((it) => it.str).join(' ');
+
+          // Year detection
+          if (!detectedYear) {
+            const ym = pageText.match(/MOD\s*200\s*(20\d{2})|Ejercicio\s*\.+\s*(20\d{2})/i);
+            if (ym) detectedYear = parseInt(ym[1] || ym[2], 10);
+          }
+
+          // NIF & Company Name detection (AEAT prints "NIF COMPANY_NAME" on same Y row)
+          for (const it of items) {
+            const nifM = it.str.match(/^([A-HJ-NP-SUVW]\d{7}[0-9A-J]|\d{8}[A-Z])\b(.*)$/);
+            if (nifM) {
+              if (!detectedNif) detectedNif = nifM[1];
+              const inlineName = (nifM[2] || '').trim();
+              const cleanName = (s) => s.replace(/\s+C[ÓO]DIGO\s+CNAE.*$/i, '').replace(/\.{3,}.*$/, '').trim();
+              if (!detectedCompany && inlineName.length > 2 && !/^(Apellidos|Modelo|NIF)/i.test(inlineName)) {
+                detectedCompany = cleanName(inlineName);
+              } else if (!detectedCompany) {
+                const sameRow = items
+                  .filter((o) => o !== it && Math.abs(o.y - it.y) <= 6 && o.x > it.x)
+                  .sort((a, b) => a.x - b.x)
+                  .map((o) => o.str)
+                  .join(' ')
+                  .trim();
+                if (sameRow.length > 2 && !/^(Apellidos|Modelo|NIF|Página)/i.test(sameRow)) {
+                  detectedCompany = cleanName(sameRow);
+                }
+              }
+            }
+          }
+
+          // Match each casilla code with the closest numeric value on the same horizontal row (|ny - cy| <= 9, nx > cx)
+          const numItems = items.filter((it) => /^-?[\d\.]+,\d{2}$/.test(it.str));
+          for (const it of items) {
+            const codeMatch = it.str.match(/\b(00\d{3})$/);
+            if (!codeMatch) continue;
+            const code = codeMatch[1];
+            if (!targetCodes.includes(code) || casillas[code] !== undefined) continue;
+
+            const candidates = numItems
+              .filter((n) => n.x > it.x && Math.abs(n.y - it.y) <= 9)
+              .sort((a, b) => Math.abs(a.y - it.y) - Math.abs(b.y - it.y) || a.x - b.x);
+
+            if (candidates.length > 0) {
+              casillas[code] = parseSpanishNumber(candidates[0].str);
+            }
+          }
+        }
+
+        const yearFromName = file.name.match(/(20\d{2})/);
+        const year = detectedYear || (yearFromName ? parseInt(yearFromName[1], 10) : new Date().getFullYear() - 1);
+        const nif = detectedNif || 'NIF no detectado';
+
+        const ventas = casillas['00255'] ?? 0;
+        const varExist = casillas['00258'] ?? 0;
+        const aprovis = casillas['00260'] ?? 0;
+        const aprovisionamientos = Math.abs(aprovis) + (varExist < 0 ? Math.abs(varExist) : -varExist);
+        const personal = Math.abs(casillas['00270'] ?? 0);
+        const amortizaciones = Math.abs(casillas['00284'] ?? 0);
+        const ebit = casillas['00296'] ?? 0;
+        const gtosFin = Math.abs(casillas['00305'] ?? 0);
+        const resultadoNeto = casillas['00500'] ?? 0;
+        const inmovilizado = casillas['00101'] ?? 0;
+        const existencias = casillas['00138'] ?? 0;
+        const clientes = casillas['00149'] ?? 0;
+        const tesoreria = casillas['00177'] ?? 0;
+        const activoCorriente = casillas['00136'] ?? (existencias + clientes + tesoreria);
+        const activoTotal = casillas['00180'] ?? (inmovilizado + activoCorriente);
+        const fondosPropios = casillas['00185'] ?? casillas['00186'] ?? 0;
+        const deudaLP = casillas['00210'] ?? 0;
+        const deudaCP = casillas['00228'] ?? Math.max(0, activoTotal - fondosPropios - deudaLP);
+
+        return {
+          fileName: file.name,
+          sizeKB: Math.round(file.size / 1024),
+          pages: pdf.numPages,
+          nif,
+          company: detectedCompany,
+          data: {
+            year,
+            ventas,
+            aprovisionamientos: Math.max(0, aprovisionamientos),
+            personal,
+            amortizaciones,
+            ebit,
+            gtosFin,
+            resultadoNeto,
+            inmovilizado,
+            existencias,
+            clientes,
+            tesoreria,
+            activoTotal,
+            fondosPropios,
+            deudaLP,
+            deudaCP
+          }
+        };
+      }
+
+      function getSortedYears() {
+        return Object.keys(state.years).map(Number).sort((a, b) => a - b);
+      }
+
+      function renderAll() {
+        const yrs = getSortedYears();
+        const hasData = yrs.length > 0;
+
+        document.getElementById('company-title').textContent = hasData
+          ? 'Análisis Financiero — ' + state.company
+          : 'Análisis Financiero Modelo 200 (AEAT)';
+        document.getElementById('company-subtitle').textContent = hasData
+          ? 'NIF: ' + state.nif + ' · Ejercicios: ' + yrs.join(' · ')
+          : 'Sube 3 ejercicios (PDF) para generar Dashboard, Excel e Informe personalizado';
+        document.getElementById('pyg-years-badge').textContent = hasData ? yrs.join(' · ') : 'Sin datos';
+        document.getElementById('bal-years-badge').textContent = hasData ? yrs.join(' · ') : 'Sin datos';
+
+        renderCasillasPreview(yrs);
+        renderKPIs(yrs);
+        renderCharts(yrs);
+        renderBreakeven(yrs);
+        renderDashTable(yrs);
+        renderReport(yrs);
+      }
+
+      function renderCasillaTable(headId, bodyId, yrs, rows, emptyMsg) {
+        const head = document.getElementById(headId);
+        const body = document.getElementById(bodyId);
+        if (!yrs.length) {
+          head.innerHTML = '<th class="px-4 py-3 font-mono">Casilla</th><th class="px-4 py-3">Concepto AEAT</th><th class="px-4 py-3 text-right">Importe</th>';
+          body.innerHTML = '<tr><td colspan="3" class="px-4 py-8 text-center text-light-on-surface-variant">' + emptyMsg + '</td></tr>';
+          return;
+        }
+        head.innerHTML = '<th class="px-4 py-3 font-mono">Casilla</th><th class="px-4 py-3">Concepto AEAT</th>' +
+          yrs.map((y) => '<th class="px-4 py-3 text-right">' + y + '</th>').join('');
+
+        body.innerHTML = rows.map(([code, label, key, bold]) =>
+          '<tr class="' + (bold ? 'bg-light-surface-container-low font-semibold' : 'hover:bg-light-surface-container-low') + '">' +
+          '<td class="px-4 py-2.5 font-mono text-xs text-light-primary font-semibold">' + code + '</td>' +
+          '<td class="px-4 py-2.5 text-light-on-surface">' + label + '</td>' +
+          yrs.map((y) => '<td class="px-4 py-2.5 text-right">' + fmtEur(state.years[y][key]) + '</td>').join('') +
+          '</tr>'
+        ).join('');
+      }
+
+      function renderCasillasPreview(yrs) {
+        const pygRows = [
+          ['00255', 'Importe neto de la cifra de negocios', 'ventas', true],
+          ['00260', 'Aprovisionamientos (neto)', 'aprovisionamientos', false],
+          ['00270', 'Gastos de personal', 'personal', false],
+          ['00284', 'Amortización del inmovilizado', 'amortizaciones', false],
+          ['00296', 'Resultado de explotación', 'ebit', true],
+          ['00305', 'Gastos financieros', 'gtosFin', false],
+          ['00500', 'Resultado del ejercicio', 'resultadoNeto', true]
+        ];
+
+        const balRows = [
+          ['00101', 'Activo no corriente / Inmovilizado', 'inmovilizado', false],
+          ['00138', 'Existencias', 'existencias', false],
+          ['00149', 'Deudores comerciales y cuentas a cobrar', 'clientes', false],
+          ['00177', 'Efectivo y otros activos líquidos', 'tesoreria', false],
+          ['00180', 'Total Activo', 'activoTotal', true],
+          ['00185', 'Patrimonio neto / Fondos propios', 'fondosPropios', true],
+          ['00210', 'Pasivo no corriente (Deuda LP)', 'deudaLP', false],
+          ['00228', 'Pasivo corriente (Deuda CP)', 'deudaCP', false]
+        ];
+
+        renderCasillaTable('pyg-head-row', 'pyg-body', yrs, pygRows, 'Sube tus PDFs para extraer las casillas de PyG.');
+        renderCasillaTable('bal-head-row', 'bal-body', yrs, balRows, 'Sube tus PDFs para extraer las casillas de Balance.');
+      }
+
+      function ringGaugeHtml(label, pct, colorHex, sub) {
+        const clamped = Math.max(0, Math.min(100, pct));
+        const r = 34;
+        const c = 2 * Math.PI * r;
+        const dash = ((clamped / 100) * c).toFixed(1);
+        return '<div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center gap-2">' +
+          '<div class="relative w-20 h-20 flex items-center justify-center">' +
+          '<svg viewBox="0 0 80 80" class="w-20 h-20 -rotate-90">' +
+          '<circle cx="40" cy="40" r="' + r + '" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="7"/>' +
+          '<circle cx="40" cy="40" r="' + r + '" fill="none" stroke="' + colorHex + '" stroke-width="7" stroke-linecap="round" stroke-dasharray="' + dash + ' ' + c.toFixed(1) + '"/>' +
+          '</svg>' +
+          '<span class="absolute font-display text-sm font-bold text-white tabular-nums">' + Math.round(clamped) + '%</span>' +
+          '</div>' +
+          '<span class="text-xs font-bold text-white text-center leading-tight">' + label + '</span>' +
+          '<span class="text-[11px] text-slate-300 text-center">' + sub + '</span>' +
+          '</div>';
+      }
+
+      function renderKPIs(yrs) {
+        const hero = document.getElementById('dash-hero');
+        const grid = document.getElementById('kpi-grid');
+        if (!yrs.length) {
+          hero.innerHTML = '';
+          grid.innerHTML = '<div class="col-span-full bg-white/5 border border-white/10 rounded-2xl p-8 text-center text-sm text-slate-300">Sube tus PDFs en <strong>2. Cargar PDFs</strong> o pulsa <strong>Ver Ejemplo (Datos Aleatorios)</strong> para ver el Dashboard.</div>';
+          return;
+        }
+        const last = state.years[yrs[yrs.length - 1]];
+        const prev = state.years[yrs[yrs.length - 2]] || last;
+        const varVentas = prev.ventas ? ((last.ventas - prev.ventas) / prev.ventas * 100) : 0;
+        const ebitda = last.resultadoNeto + last.amortizaciones + last.gtosFin;
+        const autonomia = last.activoTotal ? (last.fondosPropios / last.activoTotal * 100) : 0;
+        const margenBruto = last.ventas ? ((last.ventas - last.aprovisionamientos) / last.ventas * 100) : 0;
+        const liquidezPct = last.deudaCP ? Math.min(100, ((last.existencias + last.clientes + last.tesoreria) / last.deudaCP) * 50) : 100;
+        const liquidezRatio = last.deudaCP ? ((last.existencias + last.clientes + last.tesoreria) / last.deudaCP).toFixed(2) + 'x' : 'N/A';
+
+        hero.innerHTML =
+          '<div class="lg:col-span-6 rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-cyan-600 text-white p-6 shadow-lg flex flex-col justify-between gap-4 border border-white/15">' +
+          '<div class="flex items-center justify-between gap-2">' +
+          '<span class="px-3 py-1 rounded-full bg-white/15 text-xs font-mono uppercase tracking-wider">Ejercicio ' + last.year + ' · ' + state.nif + '</span>' +
+          '<span class="px-3 py-1 rounded-full ' + (varVentas >= 0 ? 'bg-emerald-400/25 text-emerald-100' : 'bg-red-400/25 text-red-100') + ' text-xs font-bold">' + (varVentas >= 0 ? '▲ ' : '▼ ') + fmtPct(Math.abs(varVentas)) + ' YoY</span>' +
+          '</div>' +
+          '<div>' +
+          '<p class="text-xs uppercase tracking-wider text-blue-100 font-medium">Facturación Anual (' + state.company + ')</p>' +
+          '<p class="font-display text-3xl md:text-4xl font-bold tabular-nums mt-1">' + fmtEur(last.ventas) + '</p>' +
+          '</div>' +
+          '<div class="grid grid-cols-3 gap-3 pt-3 border-t border-white/20 text-xs">' +
+          '<div><span class="text-blue-100/80 block">Resultado Neto</span><strong class="text-sm tabular-nums">' + fmtEur(last.resultadoNeto) + '</strong></div>' +
+          '<div><span class="text-blue-100/80 block">EBITDA</span><strong class="text-sm tabular-nums">' + fmtEur(ebitda) + '</strong></div>' +
+          '<div><span class="text-blue-100/80 block">Tesorería</span><strong class="text-sm tabular-nums">' + fmtEur(last.tesoreria) + '</strong></div>' +
+          '</div>' +
+          '</div>' +
+          '<div class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-3 gap-4">' +
+          ringGaugeHtml('Autonomía', autonomia, '#38BDF8', 'FF.PP. / Activo') +
+          ringGaugeHtml('Margen Bruto', margenBruto, '#34D399', 'Sobre ventas') +
+          ringGaugeHtml('Cobertura CP', liquidezPct, '#A78BFA', 'Liquidez: ' + liquidezRatio) +
+          '</div>';
+
+        const cards = [
+          { icon: 'payments', label: 'Cifra de Negocio (' + last.year + ')', val: fmtEur(last.ventas), sub: (varVentas >= 0 ? '+' : '') + fmtPct(varVentas) + ' vs ' + prev.year, ok: varVentas >= 0, spark: '0,22 20,16 40,18 60,9 80,4' },
+          { icon: 'trending_up', label: 'Resultado Neto (' + last.year + ')', val: fmtEur(last.resultadoNeto), sub: 'Margen neto: ' + fmtPct(last.ventas ? last.resultadoNeto / last.ventas * 100 : 0), ok: last.resultadoNeto >= 0, spark: '0,20 20,24 40,12 60,15 80,6' },
+          { icon: 'bolt', label: 'EBITDA Estimado (' + last.year + ')', val: fmtEur(ebitda), sub: 'Margen EBITDA: ' + fmtPct(last.ventas ? ebitda / last.ventas * 100 : 0), ok: ebitda >= 0, spark: '0,18 20,14 40,10 60,12 80,5' },
+          { icon: 'shield', label: 'Autonomía Financiera', val: fmtPct(autonomia), sub: 'FF.PP.: ' + fmtEur(last.fondosPropios), ok: autonomia >= 30, spark: '0,24 20,20 40,16 60,10 80,7' }
+        ];
+
+        grid.innerHTML = cards.map((c) =>
+          '<div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 flex flex-col gap-2 hover:bg-white/10 transition-colors">' +
+          '<div class="flex items-center justify-between">' +
+          '<span class="text-xs font-semibold text-slate-300 uppercase tracking-wide">' + c.label + '</span>' +
+          '<span class="material-symbols-outlined text-lg text-cyan-300">' + c.icon + '</span>' +
+          '</div>' +
+          '<div class="flex items-end justify-between gap-2">' +
+          '<span class="font-display text-2xl font-bold text-white tabular-nums">' + c.val + '</span>' +
+          '<svg viewBox="0 0 80 28" class="w-16 h-7 shrink-0"><polyline fill="none" stroke="' + (c.ok ? '#34D399' : '#F87171') + '" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points="' + c.spark + '"/></svg>' +
+          '</div>' +
+          '<span class="inline-flex w-fit px-2.5 py-0.5 rounded-full text-xs font-semibold ' + (c.ok ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300') + '">' + c.sub + '</span>' +
+          '</div>'
+        ).join('');
+      }
+
+      function renderCharts(yrs) {
+        const revEl = document.getElementById('chart-revenue');
+        const strEl = document.getElementById('chart-structure');
+        if (!yrs.length) {
+          revEl.innerHTML = '<p class="text-sm text-slate-400">Sin datos cargados.</p>';
+          strEl.innerHTML = '<p class="text-sm text-slate-400">Sin datos cargados.</p>';
+          return;
+        }
+
+        // 1. Attractive SVG Area/Spline Chart for Revenue & Net Income
+        const W = 520, H = 220, pL = 54, pR = 24, pT = 26, pB = 34;
+        const pW = W - pL - pR, pH = H - pT - pB;
+        const valsV = yrs.map((y) => state.years[y].ventas);
+        const valsN = yrs.map((y) => Math.max(0, state.years[y].resultadoNeto));
+        const maxV = Math.max(...valsV, 1) * 1.15;
+        const xAt = (i) => yrs.length === 1 ? pL + pW / 2 : pL + (i / (yrs.length - 1)) * pW;
+        const yAt = (v) => pT + pH - (v / maxV) * pH;
+
+        const ptsV = yrs.map((y, i) => [xAt(i), yAt(state.years[y].ventas)]);
+        const ptsN = yrs.map((y, i) => [xAt(i), yAt(Math.max(0, state.years[y].resultadoNeto))]);
+        const linePath = (pts) => pts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+        const areaPath = ptsV.length > 1
+          ? linePath(ptsV) + ' L' + ptsV[ptsV.length - 1][0].toFixed(1) + ',' + (pT + pH) + ' L' + ptsV[0][0].toFixed(1) + ',' + (pT + pH) + ' Z'
+          : '';
+
+        const yGrid = [0, 0.5, 1].map((f) => {
+          const y = yAt(maxV * f).toFixed(1);
+          const lbl = Math.round((maxV * f) / 1000) + 'k';
+          return '<line x1="' + pL + '" y1="' + y + '" x2="' + (W - pR) + '" y2="' + y + '" stroke="rgba(255,255,255,0.08)" stroke-dasharray="3 3"/>' +
+            '<text x="' + (pL - 8) + '" y="' + (+y + 4) + '" text-anchor="end" font-size="10" fill="#94A3B8">' + lbl + '</text>';
+        }).join('');
+
+        const dotsV = yrs.map((y, i) => {
+          const [cx, cy] = ptsV[i];
+          const lbl = Math.round(state.years[y].ventas / 1000) + 'k €';
+          return '<circle cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="5" fill="#22D3EE" stroke="#0F172A" stroke-width="2"/>' +
+            '<text x="' + cx.toFixed(1) + '" y="' + (cy - 10).toFixed(1) + '" text-anchor="middle" font-size="10" font-weight="bold" fill="#E2E8F0">' + lbl + '</text>' +
+            '<text x="' + cx.toFixed(1) + '" y="' + (H - 10) + '" text-anchor="middle" font-size="11" font-weight="bold" fill="#CBD5E1">' + y + '</text>';
+        }).join('');
+
+        const dotsN = yrs.map((y, i) => {
+          const [cx, cy] = ptsN[i];
+          return '<circle cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="4" fill="#34D399" stroke="#0F172A" stroke-width="2"/>';
+        }).join('');
+
+        revEl.innerHTML =
+          '<svg viewBox="0 0 ' + W + ' ' + H + '" class="w-full h-auto">' +
+          '<defs><linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22D3EE" stop-opacity="0.38"/><stop offset="100%" stop-color="#22D3EE" stop-opacity="0.02"/></linearGradient></defs>' +
+          yGrid +
+          (areaPath ? '<path d="' + areaPath + '" fill="url(#revGrad)"/>' : '') +
+          (ptsV.length > 1 ? '<path d="' + linePath(ptsV) + '" fill="none" stroke="#22D3EE" stroke-width="3" stroke-linecap="round"/>' : '') +
+          (ptsN.length > 1 ? '<path d="' + linePath(ptsN) + '" fill="none" stroke="#34D399" stroke-width="2.5" stroke-dasharray="5 3" stroke-linecap="round"/>' : '') +
+          dotsV + dotsN +
+          '</svg>' +
+          '<div class="flex items-center justify-center gap-5 text-xs text-slate-300 mt-1">' +
+          '<span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-cyan-400 inline-block"></span>Cifra de Negocio</span>' +
+          '<span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-400 inline-block"></span>Resultado Neto</span>' +
+          '</div>';
+
+        // 2. Attractive SVG Vertical Column Chart (Activo vs FFPP vs Deuda)
+        const maxA = Math.max(...yrs.map((y) => state.years[y].activoTotal), 1) * 1.15;
+        const barGroups = yrs.map((y, i) => {
+          const d = state.years[y];
+          const gx = xAt(i);
+          const hAct = Math.max(6, (d.activoTotal / maxA) * pH);
+          const hFF = Math.max(6, (Math.max(0, d.fondosPropios) / maxA) * pH);
+          const hDeuda = Math.max(6, ((d.deudaLP + d.deudaCP) / maxA) * pH);
+          const bw = 18;
+          return '<rect x="' + (gx - 28).toFixed(1) + '" y="' + (pT + pH - hAct).toFixed(1) + '" width="' + bw + '" height="' + hAct.toFixed(1) + '" rx="5" fill="#3B82F6"/>' +
+            '<rect x="' + (gx - 6).toFixed(1) + '" y="' + (pT + pH - hFF).toFixed(1) + '" width="' + bw + '" height="' + hFF.toFixed(1) + '" rx="5" fill="#34D399"/>' +
+            '<rect x="' + (gx + 16).toFixed(1) + '" y="' + (pT + pH - hDeuda).toFixed(1) + '" width="' + bw + '" height="' + hDeuda.toFixed(1) + '" rx="5" fill="#F59E0B"/>' +
+            '<text x="' + gx.toFixed(1) + '" y="' + (H - 10) + '" text-anchor="middle" font-size="11" font-weight="bold" fill="#CBD5E1">' + y + '</text>';
+        }).join('');
+
+        const yGridB = [0, 0.5, 1].map((f) => {
+          const y = (pT + pH - f * pH).toFixed(1);
+          const lbl = Math.round((maxA * f) / 1000) + 'k';
+          return '<line x1="' + pL + '" y1="' + y + '" x2="' + (W - pR) + '" y2="' + y + '" stroke="rgba(255,255,255,0.08)" stroke-dasharray="3 3"/>' +
+            '<text x="' + (pL - 8) + '" y="' + (+y + 4) + '" text-anchor="end" font-size="10" fill="#94A3B8">' + lbl + '</text>';
+        }).join('');
+
+        strEl.innerHTML =
+          '<svg viewBox="0 0 ' + W + ' ' + H + '" class="w-full h-auto">' +
+          yGridB + barGroups +
+          '</svg>' +
+          '<div class="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-300 mt-1">' +
+          '<span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-blue-500 inline-block"></span>Activo Total</span>' +
+          '<span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-400 inline-block"></span>Fondos Propios</span>' +
+          '<span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-400 inline-block"></span>Deuda Total</span>' +
+          '</div>';
+      }
+
+      let selectedBreakevenYear = null;
+
+      function dayOfYearToEs(dayNum) {
+        if (!isFinite(dayNum) || dayNum <= 0) return '—';
+        if (dayNum > 365) return 'No alcanzado';
+        const d = new Date(2025, 0, Math.round(dayNum));
+        const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+        return d.getDate() + '-' + months[d.getMonth()];
+      }
+
+      function renderBreakeven(yrs) {
+        const yearsEl = document.getElementById('breakeven-years');
+        const chartEl = document.getElementById('breakeven-chart');
+        const sumEl = document.getElementById('breakeven-summary');
+        if (!yrs.length) {
+          yearsEl.innerHTML = '';
+          chartEl.innerHTML = '<p class="text-sm text-light-on-surface-variant">Sube tus PDFs para calcular el punto de equilibrio.</p>';
+          sumEl.innerHTML = '';
+          return;
+        }
+        if (!selectedBreakevenYear || !state.years[selectedBreakevenYear]) {
+          selectedBreakevenYear = yrs[yrs.length - 1];
+        }
+
+        yearsEl.innerHTML = yrs.map((y) =>
+          '<button type="button" data-be-year="' + y + '" class="be-yr-btn px-3 py-1 rounded text-xs font-bold transition-colors ' +
+          (y === selectedBreakevenYear ? 'bg-red-600 text-white' : 'bg-white text-light-on-surface border border-light-outline-variant hover:bg-red-100') +
+          '">' + y + '</button>'
+        ).join('');
+
+        yearsEl.querySelectorAll('.be-yr-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            selectedBreakevenYear = Number(btn.getAttribute('data-be-year'));
+            renderBreakeven(yrs);
+          });
+        });
+
+        const d = state.years[selectedBreakevenYear];
+        const pr = Math.max(0, d.ventas || 0);
+        const gv = Math.max(0, d.aprovisionamientos || 0);
+        const gf = Math.max(0, pr - gv - (d.resultadoNeto || 0));
+        const totalCost = gf + gv;
+        const gvPct = pr > 0 ? (gv / pr) : 0;
+        const mcPct = 1 - gvPct;
+        const umbral = mcPct > 0 ? (gf / mcPct) : 0;
+        const ratioUmbral = pr > 0 ? (umbral / pr) : 0;
+        const diaStr = pr > 0 ? dayOfYearToEs(ratioUmbral * 365) : '—';
+
+        const W = 640, H = 300, padL = 78, padR = 20, padT = 18, padB = 42;
+        const plotW = W - padL - padR;
+        const plotH = H - padT - padB;
+        const maxY = Math.max(pr, totalCost, umbral, 1) * 1.12;
+        const toX = (t) => padL + t * plotW;
+        const toY = (v) => padT + plotH - (v / maxY) * plotH;
+
+        const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        const yTicks = [0, 0.25, 0.5, 0.75, 1].map((f) => maxY * f);
+
+        const gridSvg = yTicks.map((v) => {
+          const y = toY(v).toFixed(1);
+          const lbl = Math.round(v).toLocaleString('es-ES');
+          return '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="#E0E2EC" stroke-width="1"/>' +
+            '<text x="' + (padL - 8) + '" y="' + (+y + 4) + '" text-anchor="end" font-size="11" fill="#44474E">' + lbl + '</text>';
+        }).join('');
+
+        const xTicksSvg = months.map((m, idx) => {
+          const x = toX((idx + 1) / 12).toFixed(1);
+          return '<line x1="' + x + '" y1="' + (padT + plotH - 4) + '" x2="' + x + '" y2="' + (padT + plotH + 4) + '" stroke="#44474E" stroke-width="1"/>' +
+            '<text x="' + x + '" y="' + (padT + plotH + 18) + '" text-anchor="middle" font-size="11" fill="#44474E">' + m + '</text>';
+        }).join('');
+
+        const prLine = '<line x1="' + toX(0) + '" y1="' + toY(0) + '" x2="' + toX(1) + '" y2="' + toY(pr) + '" stroke="#06B6D4" stroke-width="3.5" stroke-linecap="round"/>';
+        const gfLine = '<line x1="' + toX(0) + '" y1="' + toY(gf) + '" x2="' + toX(1) + '" y2="' + toY(gf) + '" stroke="#DC2626" stroke-width="2"/>';
+        const ctLine = '<line x1="' + toX(0) + '" y1="' + toY(gf) + '" x2="' + toX(1) + '" y2="' + toY(totalCost) + '" stroke="#191C20" stroke-width="2"/>';
+
+        let crossSvg = '';
+        if (ratioUmbral > 0 && ratioUmbral <= 1.05 && umbral <= maxY) {
+          const cx = toX(Math.min(1, ratioUmbral)).toFixed(1);
+          const cy = toY(umbral).toFixed(1);
+          crossSvg = '<line x1="' + cx + '" y1="' + cy + '" x2="' + cx + '" y2="' + (padT + plotH) + '" stroke="#DC2626" stroke-dasharray="4 3" stroke-width="1.2"/>' +
+            '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="#DC2626" stroke="#FFFFFF" stroke-width="2"/>';
+        }
+
+        chartEl.innerHTML =
+          '<svg viewBox="0 0 ' + W + ' ' + H + '" class="w-full h-auto" role="img" aria-label="Gráfica Punto de Equilibrio">' +
+          gridSvg +
+          '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + (padT + plotH) + '" stroke="#44474E" stroke-width="1.2"/>' +
+          '<line x1="' + padL + '" y1="' + (padT + plotH) + '" x2="' + (W - padR) + '" y2="' + (padT + plotH) + '" stroke="#44474E" stroke-width="1.2"/>' +
+          xTicksSvg + prLine + gfLine + ctLine + crossSvg +
+          '</svg>' +
+          '<div class="mt-2 flex flex-wrap items-center justify-center gap-5 text-xs font-mono text-light-on-surface-variant border border-light-outline-variant rounded px-3 py-2 bg-light-surface-container-low">' +
+          '<span class="flex items-center gap-1.5"><span class="inline-block w-5 h-1 rounded bg-cyan-500"></span>Pr ' + Math.round(pr).toLocaleString('es-ES') + ' €</span>' +
+          '<span class="flex items-center gap-1.5"><span class="inline-block w-5 h-0.5 bg-red-600"></span>GF ' + Math.round(gf).toLocaleString('es-ES') + ' €</span>' +
+          '<span class="flex items-center gap-1.5"><span class="inline-block w-5 h-0.5 bg-light-on-surface"></span>GV ' + (gvPct * 100).toFixed(0) + '%</span>' +
+          '</div>';
+
+        sumEl.innerHTML =
+          '<div class="border border-light-outline-variant rounded-lg overflow-hidden">' +
+          '<div class="bg-red-600 text-white text-center font-title font-bold py-2 text-base">' + selectedBreakevenYear + '</div>' +
+          '<table class="w-full text-sm tabular-nums">' +
+          '<tbody class="divide-y divide-light-outline-variant">' +
+          '<tr><td class="px-4 py-2.5 font-medium text-light-on-surface-variant">Umbral =</td><td class="px-4 py-2.5 text-right font-bold text-light-on-surface">' + Math.round(umbral).toLocaleString('es-ES') + ' €</td></tr>' +
+          '<tr><td class="px-4 py-2.5 font-medium text-light-on-surface-variant">=</td><td class="px-4 py-2.5 text-right font-bold text-light-on-surface">' + (ratioUmbral * 100).toFixed(2).replace('.', ',') + '%</td></tr>' +
+          '<tr><td class="px-4 py-2.5 font-medium text-light-on-surface-variant">Día =</td><td class="px-4 py-2.5 text-right font-bold text-light-primary">' + diaStr + '</td></tr>' +
+          '</tbody></table></div>';
+      }
+
+      function renderDashTable(yrs) {
+        const head = document.getElementById('dash-table-head');
+        const body = document.getElementById('dash-table-body');
+        if (!yrs.length) {
+          head.innerHTML = '<tr><th class="px-4 py-3">Partida</th><th class="px-4 py-3 text-right">Importe</th></tr>';
+          body.innerHTML = '<tr><td colspan="2" class="px-4 py-8 text-center text-light-on-surface-variant">Sube tus PDFs para ver las tablas comparativas.</td></tr>';
+          return;
+        }
+        head.innerHTML = '<tr><th class="px-4 py-3">Partida</th>' + yrs.map((y) => '<th class="px-4 py-3 text-right">' + y + ' (€)</th><th class="px-4 py-3 text-right">%</th>').join('') + '</tr>';
+
+        let rows = [];
+        if (activeTable === 'balance') {
+          rows = [
+            ['A · Inmovilizado (00101)', (d) => [d.inmovilizado, d.activoTotal ? d.inmovilizado / d.activoTotal * 100 : 0]],
+            ['B · Existencias (00138)', (d) => [d.existencias, d.activoTotal ? d.existencias / d.activoTotal * 100 : 0]],
+            ['C · Clientes y Tesorería (00149+00177)', (d) => [d.clientes + d.tesoreria, d.activoTotal ? (d.clientes + d.tesoreria) / d.activoTotal * 100 : 0]],
+            ['D · TOTAL ACTIVO (00180)', (d) => [d.activoTotal, 100], true],
+            ['E · Fondos Propios (00185)', (d) => [d.fondosPropios, d.activoTotal ? d.fondosPropios / d.activoTotal * 100 : 0]],
+            ['F · Deuda Largo Plazo (00210)', (d) => [d.deudaLP, d.activoTotal ? d.deudaLP / d.activoTotal * 100 : 0]],
+            ['G · Deuda Corto Plazo (00228)', (d) => [d.deudaCP, d.activoTotal ? d.deudaCP / d.activoTotal * 100 : 0]]
+          ];
+        } else if (activeTable === 'pyg') {
+          rows = [
+            ['Cifra de Negocio (00255)', (d) => [d.ventas, 100], true],
+            ['Aprovisionamientos (00260)', (d) => [d.aprovisionamientos, d.ventas ? d.aprovisionamientos / d.ventas * 100 : 0]],
+            ['Margen Bruto', (d) => [d.ventas - d.aprovisionamientos, d.ventas ? (d.ventas - d.aprovisionamientos) / d.ventas * 100 : 0]],
+            ['Gastos de Personal (00270)', (d) => [d.personal, d.ventas ? d.personal / d.ventas * 100 : 0]],
+            ['Amortizaciones (00284)', (d) => [d.amortizaciones, d.ventas ? d.amortizaciones / d.ventas * 100 : 0]],
+            ['Gastos Financieros (00305)', (d) => [d.gtosFin, d.ventas ? d.gtosFin / d.ventas * 100 : 0]],
+            ['Resultado Neto (00500)', (d) => [d.resultadoNeto, d.ventas ? d.resultadoNeto / d.ventas * 100 : 0], true]
+          ];
+        } else {
+          head.innerHTML = '<tr><th class="px-4 py-3">Ratio Financiero</th>' + yrs.map((y) => '<th class="px-4 py-3 text-right">' + y + '</th>').join('') + '</tr>';
+          const ratioRows = [
+            ['Autonomía Financiera (FF.PP. / Activo)', (d) => fmtPct(d.activoTotal ? d.fondosPropios / d.activoTotal * 100 : 0)],
+            ['Fondo de Maniobra (€)', (d) => fmtEur((d.existencias + d.clientes + d.tesoreria) - d.deudaCP)],
+            ['Liquidez General (AC / PC)', (d) => (d.deudaCP ? ((d.existencias + d.clientes + d.tesoreria) / d.deudaCP).toFixed(2) + 'x' : 'N/A')],
+            ['ROA — Rentabilidad Económica (%)', (d) => fmtPct(d.activoTotal ? d.resultadoNeto / d.activoTotal * 100 : 0)],
+            ['ROE — Rentabilidad Financiera (%)', (d) => fmtPct(d.fondosPropios ? d.resultadoNeto / d.fondosPropios * 100 : 0)]
+          ];
+          body.innerHTML = ratioRows.map(([label, fn]) =>
+            '<tr class="hover:bg-light-surface-container-low"><td class="px-4 py-2.5 font-medium">' + label + '</td>' +
+            yrs.map((y) => '<td class="px-4 py-2.5 text-right">' + fn(state.years[y]) + '</td>').join('') + '</tr>'
+          ).join('');
+          return;
+        }
+
+        body.innerHTML = rows.map(([label, fn, bold]) =>
+          '<tr class="' + (bold ? 'bg-light-surface-container-low font-semibold' : 'hover:bg-light-surface-container-low') + '">' +
+          '<td class="px-4 py-2.5">' + label + '</td>' +
+          yrs.map((y) => {
+            const [v, p] = fn(state.years[y]);
+            return '<td class="px-4 py-2.5 text-right">' + fmtEur(v) + '</td><td class="px-4 py-2.5 text-right text-light-on-surface-variant">' + fmtPct(p) + '</td>';
+          }).join('') + '</tr>'
+        ).join('');
+      }
+
+      function renderReport(yrs) {
+        const container = document.getElementById('report-container');
+        if (!yrs.length) {
+          container.innerHTML = '<div class="text-center py-8 text-sm text-light-on-surface-variant">Sube tus PDFs del Modelo 200 para generar automáticamente el informe personalizado de la empresa.</div>';
+          return;
+        }
+        const first = state.years[yrs[0]];
+        const last = state.years[yrs[yrs.length - 1]];
+        const varVentasTotal = first.ventas ? ((last.ventas - first.ventas) / first.ventas * 100) : 0;
+        const margenBruto = last.ventas ? ((last.ventas - last.aprovisionamientos) / last.ventas * 100) : 0;
+        const pesoPersonal = last.ventas ? (last.personal / last.ventas * 100) : 0;
+        const autonomia = last.activoTotal ? (last.fondosPropios / last.activoTotal * 100) : 0;
+        const fm = (last.existencias + last.clientes + last.tesoreria) - last.deudaCP;
+
+        const fortalezas = [];
+        const alertas = [];
+        if (last.resultadoNeto > 0) fortalezas.push('Rentabilidad positiva en ' + last.year + ' con un beneficio neto de ' + fmtEur(last.resultadoNeto) + '.');
+        else alertas.push('Resultado neto negativo en ' + last.year + ' (' + fmtEur(last.resultadoNeto) + '); requiere ajuste de márgenes o estructura.');
+
+        if (autonomia >= 35) fortalezas.push('Sólida capitalización propia (' + fmtPct(autonomia) + ' del balance financiado con Fondos Propios).');
+        else alertas.push('Autonomía financiera ajustada (' + fmtPct(autonomia) + '); elevada dependencia de financiación ajena.');
+
+        if (fm >= 0) fortalezas.push('Fondo de maniobra positivo (' + fmtEur(fm) + '), cubriendo los compromisos a corto plazo.');
+        else alertas.push('Fondo de maniobra negativo (' + fmtEur(fm) + '); vigilar tensiones de tesorería a corto plazo.');
+
+        container.innerHTML =
+          '<div class="border-b border-light-outline-variant pb-4">' +
+          '<span class="font-mono text-xs text-light-primary uppercase tracking-wider">Informe Ejecutivo Personalizado · ' + state.nif + '</span>' +
+          '<h2 class="font-display text-2xl font-bold text-light-on-surface mt-1">Diagnóstico Económico-Financiero: ' + state.company + '</h2>' +
+          '<p class="text-sm text-light-on-surface-variant mt-1">Análisis comparativo automático basado en los Modelos 200 de los ejercicios ' + yrs.join(', ') + '.</p>' +
+          '</div>' +
+          '<div class="grid grid-cols-1 md:grid-cols-2 gap-6">' +
+          '<div class="flex flex-col gap-2">' +
+          '<h3 class="font-title text-base font-semibold text-light-on-surface">1. Evolución Comercial y Márgenes</h3>' +
+          '<p class="text-sm text-light-on-surface-variant leading-relaxed">Entre ' + first.year + ' y ' + last.year + ', la cifra de negocio ha variado un <strong>' + (varVentasTotal >= 0 ? '+' : '') + fmtPct(varVentasTotal) + '</strong>, situándose en <strong>' + fmtEur(last.ventas) + '</strong>. En el último ejercicio, el margen bruto sobre ventas alcanza el <strong>' + fmtPct(margenBruto) + '</strong> y los gastos de personal representan el <strong>' + fmtPct(pesoPersonal) + '</strong> de la facturación.</p>' +
+          '</div>' +
+          '<div class="flex flex-col gap-2">' +
+          '<h3 class="font-title text-base font-semibold text-light-on-surface">2. Solvencia y Equilibrio Patrimonial</h3>' +
+          '<p class="text-sm text-light-on-surface-variant leading-relaxed">El activo total de ' + last.year + ' asciende a <strong>' + fmtEur(last.activoTotal) + '</strong>, respaldado por unos Fondos Propios de <strong>' + fmtEur(last.fondosPropios) + '</strong> (autonomía del <strong>' + fmtPct(autonomia) + '</strong>) y una tesorería disponible de <strong>' + fmtEur(last.tesoreria) + '</strong>.</p>' +
+          '</div>' +
+          '</div>' +
+          '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">' +
+          '<div class="bg-success-container/40 border border-success/30 rounded-lg p-4">' +
+          '<h4 class="font-title text-sm font-semibold text-on-success-container mb-2">Puntos Fuertes Detectados</h4>' +
+          '<ul class="list-disc pl-5 text-sm text-on-success-container space-y-1">' + (fortalezas.length ? fortalezas.map((f) => '<li>' + f + '</li>').join('') : '<li>Sin fortalezas destacadas automáticamente.</li>') + '</ul>' +
+          '</div>' +
+          '<div class="bg-light-error-container/40 border border-light-error/30 rounded-lg p-4">' +
+          '<h4 class="font-title text-sm font-semibold text-light-on-error-container mb-2">Alertas y Recomendaciones</h4>' +
+          '<ul class="list-disc pl-5 text-sm text-light-on-error-container space-y-1">' + (alertas.length ? alertas.map((a) => '<li>' + a + '</li>').join('') : '<li>Sin alertas críticas en los ratios principales.</li>') + '</ul>' +
+          '</div>' +
+          '</div>';
+      }
+
+      function exportWorkbook() {
+        const yrs = getSortedYears();
+        if (!yrs.length) {
+          showToast('Sube primero los PDFs del Modelo 200 para generar el Excel.');
+          return;
+        }
+        if (typeof XLSX === 'undefined') {
+          showToast('Cargando librería Excel, inténtalo de nuevo en un segundo.');
+          return;
+        }
+        const wb = XLSX.utils.book_new();
+
+        const balRows = [
+          ['1. BALANCES COMPARADOS - ' + state.company, ...yrs.flatMap((y) => [y + ' (€)', '%'])],
+          ['A · INMOVILIZADO (00101)', ...yrs.flatMap((y) => { const d = state.years[y]; return [d.inmovilizado, d.activoTotal ? +(d.inmovilizado / d.activoTotal * 100).toFixed(2) : 0]; })],
+          ['B · EXISTENCIAS (00138)', ...yrs.flatMap((y) => { const d = state.years[y]; return [d.existencias, d.activoTotal ? +(d.existencias / d.activoTotal * 100).toFixed(2) : 0]; })],
+          ['C · CLIENTES Y TESORERÍA (00149+00177)', ...yrs.flatMap((y) => { const d = state.years[y]; const c = d.clientes + d.tesoreria; return [c, d.activoTotal ? +(c / d.activoTotal * 100).toFixed(2) : 0]; })],
+          ['D · TOTAL ACTIVO (00180)', ...yrs.flatMap((y) => [state.years[y].activoTotal, 100])],
+          ['E · FONDOS PROPIOS (00185)', ...yrs.flatMap((y) => { const d = state.years[y]; return [d.fondosPropios, d.activoTotal ? +(d.fondosPropios / d.activoTotal * 100).toFixed(2) : 0]; })],
+          ['F · DEUDA LARGO PLAZO (00210)', ...yrs.flatMap((y) => { const d = state.years[y]; return [d.deudaLP, d.activoTotal ? +(d.deudaLP / d.activoTotal * 100).toFixed(2) : 0]; })],
+          ['G · DEUDA CORTO PLAZO (00228)', ...yrs.flatMap((y) => { const d = state.years[y]; return [d.deudaCP, d.activoTotal ? +(d.deudaCP / d.activoTotal * 100).toFixed(2) : 0]; })]
+        ];
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(balRows), 'Balance');
+
+        const expRows = [
+          ['2. EXPLOTACIÓN Y PYG', ...yrs.flatMap((y) => [y + ' (€)', '%'])],
+          ['CIFRA DE NEGOCIO (00255)', ...yrs.flatMap((y) => [state.years[y].ventas, 100])],
+          ['Aprovisionamientos (00260)', ...yrs.flatMap((y) => { const d = state.years[y]; return [d.aprovisionamientos, d.ventas ? +(d.aprovisionamientos / d.ventas * 100).toFixed(2) : 0]; })],
+          ['Margen Bruto', ...yrs.flatMap((y) => { const d = state.years[y]; const mb = d.ventas - d.aprovisionamientos; return [mb, d.ventas ? +(mb / d.ventas * 100).toFixed(2) : 0]; })],
+          ['Gastos de Personal (00270)', ...yrs.flatMap((y) => { const d = state.years[y]; return [d.personal, d.ventas ? +(d.personal / d.ventas * 100).toFixed(2) : 0]; })],
+          ['Amortizaciones (00284)', ...yrs.flatMap((y) => { const d = state.years[y]; return [d.amortizaciones, d.ventas ? +(d.amortizaciones / d.ventas * 100).toFixed(2) : 0]; })],
+          ['Gastos Financieros (00305)', ...yrs.flatMap((y) => { const d = state.years[y]; return [d.gtosFin, d.ventas ? +(d.gtosFin / d.ventas * 100).toFixed(2) : 0]; })],
+          ['RESULTADO NETO (00500)', ...yrs.flatMap((y) => { const d = state.years[y]; return [d.resultadoNeto, d.ventas ? +(d.resultadoNeto / d.ventas * 100).toFixed(2) : 0]; })]
+        ];
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(expRows), 'Explotacion');
+
+        const ratioRows = [
+          ['3. RATIOS CLAVE', ...yrs],
+          ['Autonomía Financiera (%)', ...yrs.map((y) => { const d = state.years[y]; return d.activoTotal ? +(d.fondosPropios / d.activoTotal * 100).toFixed(2) : 0; })],
+          ['ROA (%)', ...yrs.map((y) => { const d = state.years[y]; return d.activoTotal ? +(d.resultadoNeto / d.activoTotal * 100).toFixed(2) : 0; })],
+          ['ROE (%)', ...yrs.map((y) => { const d = state.years[y]; return d.fondosPropios ? +(d.resultadoNeto / d.fondosPropios * 100).toFixed(2) : 0; })]
+        ];
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(ratioRows), 'Ratios');
+
+        XLSX.writeFile(wb, 'Analisis_Modelo200_' + state.nif + '.xlsx');
+        showToast('Excel (.xlsx) descargado correctamente.');
+      }
+
+      async function handleFiles(fileList) {
+        const files = Array.from(fileList || []).filter((f) => /\.pdf$/i.test(f.name));
+        if (!files.length) return;
+        showToast('Extrayendo casillas AEAT de ' + files.length + ' PDF(s)...');
+        const newYears = {};
+        const cards = document.getElementById('uploaded-cards');
+        cards.innerHTML = '';
+
+        for (const f of files) {
+          const res = await parseModelo200PDF(f);
+          newYears[res.data.year] = res.data;
+          if (res.company) state.company = res.company;
+          if (res.nif && res.nif !== 'NIF no detectado') state.nif = res.nif;
+
+          const card = document.createElement('div');
+          card.className = 'bg-light-surface-container-lowest border border-light-primary rounded-lg p-4 flex flex-col gap-1';
+          card.innerHTML =
+            '<div class="flex items-center justify-between"><span class="font-title font-semibold text-sm">' + res.fileName + '</span><span class="px-2 py-0.5 rounded bg-success-container text-on-success-container text-xs font-medium">' + res.data.year + '</span></div>' +
+            '<span class="font-mono text-xs text-light-on-surface-variant">NIF: ' + res.nif + ' · ' + res.pages + ' págs · ' + res.sizeKB + ' KB</span>' +
+            '<span class="text-xs font-medium text-light-on-surface tabular-nums">Cifra Negocio (00255): ' + fmtEur(res.data.ventas) + '</span>';
+          cards.appendChild(card);
+        }
+
+        if (Object.keys(newYears).length > 0) {
+          state.years = newYears;
+          if (state.company === 'Sin empresa cargada') {
+            state.company = files[0].name.replace(/\.pdf$/i, '');
+          }
+          renderAll();
+          switchView('dashboard');
+          showToast('Dashboard, Excel e Informe generados con tus PDFs.');
+        }
+      }
+
+      function switchView(target) {
+        document.querySelectorAll('.view-tab').forEach((b) => {
+          const act = (b.getAttribute('data-active-cls') || '').split(' ').filter(Boolean);
+          const inact = (b.getAttribute('data-inactive-cls') || '').split(' ').filter(Boolean);
+          b.classList.remove(...act);
+          b.classList.add(...inact);
+          if (b.getAttribute('data-view') === target) {
+            b.classList.remove(...inact);
+            b.classList.add(...act);
+          }
+        });
+        document.querySelectorAll('.view-panel').forEach((p) => p.classList.add('hidden'));
+        document.getElementById('view-' + target).classList.remove('hidden');
+      }
+
+      function loadRandomExample() {
+        const rnd = (min, max) => Math.round((min + Math.random() * (max - min)) * 100) / 100;
+        const v23 = rnd(650000, 950000);
+        const v24 = rnd(v23 * 1.05, v23 * 1.35);
+        const v25 = rnd(v24 * 1.04, v24 * 1.28);
+        const makeYear = (year, v) => {
+          const aprovis = Math.round(v * rnd(0.42, 0.54) * 100) / 100;
+          const personal = Math.round(v * rnd(0.22, 0.30) * 100) / 100;
+          const amort = Math.round(v * rnd(0.04, 0.07) * 100) / 100;
+          const gFin = Math.round(v * rnd(0.01, 0.025) * 100) / 100;
+          const resNeto = Math.round((v - aprovis - personal - amort - gFin - v * 0.08) * 100) / 100;
+          const inmov = Math.round(v * rnd(0.35, 0.55) * 100) / 100;
+          const exist = Math.round(v * rnd(0.08, 0.14) * 100) / 100;
+          const cli = Math.round(v * rnd(0.10, 0.18) * 100) / 100;
+          const tes = Math.round(v * rnd(0.05, 0.14) * 100) / 100;
+          const actTot = Math.round((inmov + exist + cli + tes) * 100) / 100;
+          const ffpp = Math.round(actTot * rnd(0.35, 0.52) * 100) / 100;
+          const dLP = Math.round((actTot - ffpp) * 0.55 * 100) / 100;
+          const dCP = Math.round((actTot - ffpp - dLP) * 100) / 100;
+          return { year, ventas: v, aprovisionamientos: aprovis, personal, amortizaciones: amort, ebit: resNeto + gFin, gtosFin: gFin, resultadoNeto: resNeto, inmovilizado: inmov, existencias: exist, clientes: cli, tesoreria: tes, activoTotal: actTot, fondosPropios: ffpp, deudaLP: dLP, deudaCP: dCP };
+        };
+        state = {
+          company: 'EMPRESA EJEMPLO DEMO, S.L.',
+          nif: 'B00000000',
+          years: { 2023: makeYear(2023, v23), 2024: makeYear(2024, v24), 2025: makeYear(2025, v25) }
+        };
+        document.getElementById('uploaded-cards').innerHTML = '';
+        renderAll();
+        switchView('dashboard');
+        showToast('Ejemplo aleatorio generado. Explora el Dashboard o descarga el Excel.');
+      }
+
+      // Tabs
+      document.querySelectorAll('.view-tab').forEach((btn) => {
+        btn.addEventListener('click', () => switchView(btn.getAttribute('data-view')));
+      });
+
+      document.querySelectorAll('.tbl-tab').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          activeTable = btn.getAttribute('data-table');
+          document.querySelectorAll('.tbl-tab').forEach((b) => {
+            b.classList.remove('border-light-primary', 'text-light-primary');
+            b.classList.add('border-transparent', 'text-light-on-surface-variant');
+          });
+          btn.classList.add('border-light-primary', 'text-light-primary');
+          btn.classList.remove('border-transparent', 'text-light-on-surface-variant');
+          renderDashTable(getSortedYears());
+        });
+      });
+
+      document.getElementById('pdf-input').addEventListener('change', (e) => handleFiles(e.target.files));
+      document.getElementById('btn-random-demo').addEventListener('click', loadRandomExample);
+
+      const dropZone = document.getElementById('drop-zone');
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('bg-light-primary-container/20'); });
+      dropZone.addEventListener('dragleave', () => dropZone.classList.remove('bg-light-primary-container/20'));
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('bg-light-primary-container/20');
+        handleFiles(e.dataTransfer.files);
+      });
+
+      document.getElementById('btn-clear-data').addEventListener('click', () => {
+        state = JSON.parse(JSON.stringify(EMPTY_STATE));
+        document.getElementById('uploaded-cards').innerHTML = '';
+        document.getElementById('pdf-input').value = '';
+        renderAll();
+        switchView('upload');
+        showToast('Datos limpiados.');
+      });
+
+      document.getElementById('btn-export-xlsx').addEventListener('click', exportWorkbook);
+
+      renderAll();
+    })();
+  </script>
+
+
+</body></html>
